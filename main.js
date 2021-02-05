@@ -9,7 +9,7 @@ const _ = require("lodash");
 async function findBindings(version) {
   let dir = path.resolve(path.join("node_modules", "@serialport", "bindings", "bin"));
 
-  if (!fs.existsSync(dir)) {
+  if (fs.existsSync(dir)) {
     // Mac or Linux
     var folder = fs.readdirSync(dir)[0];
     let regex = /(?<platform>[a-z0-9]+)-(?<arch>[a-z0-9]+)-(?<abi>[0-9]+)/i;
