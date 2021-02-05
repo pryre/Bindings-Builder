@@ -1,17 +1,19 @@
 const fs = require("fs")
 const homedir = require("os").homedir();
 const git = require("isomorphic-git");
-const http = require('isomorphic-git/http/node')
+const http = require('isomorphic-git/http/node');
+const path = require('path');
 
 async function processBuild(token, email) {
-  let dir = "./node_modules/@serialport/bindings/bin";
+  let dir = path.join("node_modules", "@serialport", "bindings", "bin");
   let binding_folder = fs.readdirSync(dir)[0];
-  let binding_folder_fullpath = `${dir}/${binding_folder}`;
+  let binding_folder_fullpath = path.join(dir, binding_folder);
   let regex = /(?<platform>[a-z0-9]+)-(?<arch>[a-z0-9]+)-(?<abi>[0-9]+)/i;
   let match = regex.exec(binding_folder);
   let renamed_folder = `node-v${match.groups.abi}-${match.groups.platform}-${match.groups.arch}`;
-  let renamed_folder_fullpath = `${dir}/${renamed_folder}`;
-  let repo_folder = `${homedir}/Pico-Go`;
+  let renamed_folder_fullpath = path.join(dir, renamed_folder);
+  let repo_folder = path.join(homedir, "Pico-Go");
+  let final_folder = path.join(repo_folder, "native_modules", "@serialport", "bindings", "lib", "binding", renamed_folder);
 
   // Delete an existing source folder and make a new one
   if (fs.existsSync(repo_folder))
@@ -42,17 +44,18 @@ async function processBuild(token, email) {
   fs.renameSync(binding_folder_fullpath, renamed_folder_fullpath);
 
   // Delete an existing target folder
-  if (fs.existsSync(`${repo_folder}/native_modules/@serialport/bindings/lib/binding/${renamed_folder}`))
-  fs.rmdirSync(`${repo_folder}/native_modules/@serialport/bindings/lib/binding/${renamed_folder}`, {
+
+  if (fs.existsSync(final_folder))
+  fs.rmdirSync(final_folder, {
     recursive: true,
     force: true
   });
 
   // Move bindings to repo
-  fs.renameSync(renamed_folder_fullpath, `${repo_folder}/native_modules/@serialport/bindings/lib/binding/${renamed_folder}`);
+  fs.renameSync(renamed_folder_fullpath, final_folder);
 
   // Add
-  await git.add({ fs, dir: repo_folder, filepath: `native_modules/@serialport/bindings/lib/binding/${renamed_folder}/bindings.node` });
+  await git.add({ fs, dir: repo_folder, filepath: path.join(final_folder, "bindings.node") });
 
   // Commit
   await git.commit({
