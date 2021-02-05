@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "electronVersion": "11.2.1",
   "scripts": {
-    "postinstall": "electron-rebuild -f -w serialport --version 11.2.1"
+    "postinstall": "electron-rebuild -f -w serialport --version $npm_package_electronVersion"
   },
   "author": "",
   "license": "ISC",

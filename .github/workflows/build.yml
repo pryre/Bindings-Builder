@@ -11,6 +11,12 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v1
+    - name: Get Electron Version
+      id: version
+      uses: notiz-dev/github-action-json-property@release
+      with: 
+          path: 'package.json'
+          prop_path: 'electronVersion'
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -27,4 +33,4 @@ jobs:
     - name: Install and Rebuild Bindings
       run: npm install
     - name: Move Bindings To Repo
-      run: node main.js 11.2.1 ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
+      run: node main.js ${{ steps.version.outputs.prop }} ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}

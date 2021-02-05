@@ -37,6 +37,8 @@ async function findBindings(version) {
 
 async function processBuild(version, token, email) {
   let found = await findBindings(version);
+  console.log(found);
+
   let repo_folder = path.resolve(path.join("..", "..", "Pico-Go"));
   let final_folder = path.join(repo_folder, "native_modules", "@serialport", "bindings", "lib", "binding", found.binding_folder_name);
   let final_file = path.join(final_folder, "bindings.node");
@@ -77,6 +79,7 @@ async function processBuild(version, token, email) {
   fs.mkdirSync(final_folder);
 
   // Move bindings to repo
+  console.log(`Moving '${found.file}' to '${final_file}' ..`);
   fs.copyFileSync(found.file, final_file);
 
   // Add
