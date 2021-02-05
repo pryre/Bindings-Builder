@@ -1,5 +1,4 @@
 const fs = require("fs")
-const homedir = require("os").homedir();
 const git = require("isomorphic-git");
 const http = require('isomorphic-git/http/node');
 const path = require('path');
@@ -12,7 +11,7 @@ async function processBuild(token, email) {
   let match = regex.exec(binding_folder);
   let renamed_folder = `node-v${match.groups.abi}-${match.groups.platform}-${match.groups.arch}`;
   let renamed_folder_fullpath = path.join(dir, renamed_folder);
-  let repo_folder = path.join(homedir, "Pico-Go");
+  let repo_folder = path.resolve(path.join("..", "..", "Pico-Go"));
   let final_folder = path.join(repo_folder, "native_modules", "@serialport", "bindings", "lib", "binding", renamed_folder);
 
   // Delete an existing source folder and make a new one
@@ -55,7 +54,7 @@ async function processBuild(token, email) {
   fs.renameSync(renamed_folder_fullpath, final_folder);
 
   // Add
-  await git.add({ fs, dir: repo_folder, filepath: path.join(final_folder, "bindings.node") });
+  await git.add({ fs, dir: repo_folder, filepath: path.relative(repo_folder, path.join(final_folder, "bindings.node")) });
 
   // Commit
   await git.commit({
