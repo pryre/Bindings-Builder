@@ -93,35 +93,53 @@ async function processBuild(version, token, email) {
     message: `Bindings-Builder added ${found.binding_folder_name}`
   });
 
-  // Pull
-  await git.pull({
-    fs,
-    http,
-    dir: repo_folder,
-    ref: 'develop',
-    singleBranch: true,
-    author: {
-      name: "Chris Wood",
-      email: email
+  await pushChanges(repo_folder, email, token);
+}
+
+async function pushChanges(repo_folder, email, token){
+  let err = null;
+  
+  for (var i = 0; i < 3; i++){
+    try {
+      // Pull
+      await git.pull({
+        fs,
+        http,
+        dir: repo_folder,
+        ref: 'develop',
+        singleBranch: true,
+        author: {
+          name: "Chris Wood",
+          email: email
+        }
+      });
+
+      // Push
+      let pushResult = await git.push({
+        fs,
+        http,
+        dir: repo_folder,
+        remote: 'origin',
+        ref: 'develop',
+        onAuth: () => ({
+          username: token
+        }),
+      });
+
+      if (pushResult.ok){
+        console.log("Push completed successfully!");
+        return;
+      }
+
+      err = pushResult.error;
     }
-  });
-
-  // Push
-  let pushResult = await git.push({
-    fs,
-    http,
-    dir: repo_folder,
-    remote: 'origin',
-    ref: 'develop',
-    onAuth: () => ({
-      username: token
-    }),
-  });
-
-  console.log(`Push completed successfully: ${pushResult.ok}`);
-
-  if (!pushResult.ok)
-    console.error(pushResult.error);
+    catch(error){
+      err = error;
+    }
+  }
+  
+  console.log("Push failed!");
+  console.error(err);
 }
 
 let args = process.argv.slice(2);
