@@ -5,7 +5,7 @@ const http = require('isomorphic-git/http/node');
 const path = require('path');
 
 async function processBuild(token, email) {
-  let dir = path.join("node_modules", "@serialport", "bindings", "bin");
+  let dir = path.resolve(path.join("node_modules", "@serialport", "bindings", "bin"));
   let binding_folder = fs.readdirSync(dir)[0];
   let binding_folder_fullpath = path.join(dir, binding_folder);
   let regex = /(?<platform>[a-z0-9]+)-(?<arch>[a-z0-9]+)-(?<abi>[0-9]+)/i;
