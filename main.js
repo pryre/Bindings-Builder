@@ -2,17 +2,44 @@ const fs = require("fs")
 const git = require("isomorphic-git");
 const http = require('isomorphic-git/http/node');
 const path = require('path');
+const fetch = require('node-fetch');
+const glob = require("glob");
+const _ = require("lodash");
 
-async function processBuild(token, email) {
+async function findBindings(version) {
   let dir = path.resolve(path.join("node_modules", "@serialport", "bindings", "bin"));
-  let binding_folder = fs.readdirSync(dir)[0];
-  let binding_folder_fullpath = path.join(dir, binding_folder);
-  let regex = /(?<platform>[a-z0-9]+)-(?<arch>[a-z0-9]+)-(?<abi>[0-9]+)/i;
-  let match = regex.exec(binding_folder);
-  let renamed_folder = `node-v${match.groups.abi}-${match.groups.platform}-${match.groups.arch}`;
-  let renamed_folder_fullpath = path.join(dir, renamed_folder);
+
+  if (!fs.existsSync(dir)) {
+    // Mac or Linux
+    var folder = fs.readdirSync(dir)[0];
+    let regex = /(?<platform>[a-z0-9]+)-(?<arch>[a-z0-9]+)-(?<abi>[0-9]+)/i;
+    let match = regex.exec(folder);
+
+    return {
+      file: path.join(dir, folder, "bindings.node"),
+      binding_folder_name: `node-v${match.groups.abi}-${match.groups.platform}-${match.groups.arch}`
+    };
+  }
+  else {
+    // Windows
+    let response = await fetch("https://raw.githubusercontent.com/electron/releases/master/lite.json");
+    let versions = await response.json();
+    let value = _.find(versions, v => v.version == version);
+    let abi = value.deps.modules;
+    let matches = glob.sync("**/bindings.node");
+    
+    return {
+      file: path.resolve(matches[0]),
+      binding_folder_name: `node-v${abi}-win32-x64`
+    };
+  }
+}
+
+async function processBuild(version, token, email) {
+  let found = await findBindings(version);
   let repo_folder = path.resolve(path.join("..", "..", "Pico-Go"));
-  let final_folder = path.join(repo_folder, "native_modules", "@serialport", "bindings", "lib", "binding", renamed_folder);
+  let final_folder = path.join(repo_folder, "native_modules", "@serialport", "bindings", "lib", "binding", found.binding_folder_name);
+  let final_file = path.join(final_folder, "bindings.node");
 
   // Delete an existing source folder and make a new one
   if (fs.existsSync(repo_folder))
@@ -39,9 +66,6 @@ async function processBuild(token, email) {
     ref: 'develop'
   });
 
-  // Rename in format node-v{abi}-{platform}-{arch}
-  fs.renameSync(binding_folder_fullpath, renamed_folder_fullpath);
-
   // Delete an existing target folder
 
   if (fs.existsSync(final_folder))
@@ -50,11 +74,13 @@ async function processBuild(token, email) {
     force: true
   });
 
+  fs.mkdirSync(final_folder);
+
   // Move bindings to repo
-  fs.renameSync(renamed_folder_fullpath, final_folder);
+  fs.copyFileSync(found.file, final_file);
 
   // Add
-  await git.add({ fs, dir: repo_folder, filepath: path.relative(repo_folder, path.join(final_folder, "bindings.node")) });
+  await git.add({ fs, dir: repo_folder, filepath: path.relative(repo_folder, final_file) });
 
   // Commit
   await git.commit({
@@ -64,7 +90,7 @@ async function processBuild(token, email) {
       name: "Chris Wood",
       email: email
     },
-    message: `Bindings-Builder added ${renamed_folder}`
+    message: `Bindings-Builder added ${found.binding_folder_name}`
   });
 
   // Pull
@@ -100,6 +126,11 @@ async function processBuild(token, email) {
 
 let args = process.argv.slice(2);
 
-processBuild(args[0], args[1]).then(function () {
-  console.log("All done!");
-})
+try{
+  processBuild(args[0], args[1], args[2]).then(function () {
+    console.log("All done!");
+  });
+}
+catch (err) {
+  console.error(err);
+}

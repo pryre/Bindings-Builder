@@ -10,7 +10,10 @@
   "license": "ISC",
   "dependencies": {
     "electron-rebuild": "^2.3.4",
+    "glob": "^7.1.6",
     "isomorphic-git": "^1.8.0",
+    "lodash": "^4.17.20",
+    "node-fetch": "^2.6.1",
     "serialport": "^9.0.6"
   }
 }

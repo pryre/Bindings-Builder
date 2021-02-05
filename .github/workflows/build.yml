@@ -27,4 +27,4 @@ jobs:
     - name: Install and Rebuild Bindings
       run: npm install
     - name: Move Bindings To Repo
-      run: node main.js ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
+      run: node main.js 11.2.1 ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
