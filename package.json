@@ -1,0 +1,16 @@
+{
+  "name": "bindings-builder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "./node_modules/.bin/electron-rebuild -f -w serialport --version 11.2.1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "electron-rebuild": "^2.3.4",
+    "isomorphic-git": "^1.8.0",
+    "serialport": "^9.0.6"
+  }
+}
