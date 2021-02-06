@@ -5,6 +5,8 @@ const path = require('path');
 const fetch = require('node-fetch');
 const glob = require("glob");
 const _ = require("lodash");
+const util = require('util');
+const spawn = util.promisify(require('child_process').spawn);
 
 async function findBindings(version) {
   let dir = path.resolve(path.join("node_modules", "@serialport", "bindings", "bin"));
@@ -82,6 +84,12 @@ async function processBuild(version, token, email) {
   console.log(`Moving '${found.file}' to '${final_file}' ..`);
   fs.copyFileSync(found.file, final_file);
 
+  await runGitCommand(["config", "user.name", `"Chris Wood"`], repo_folder);
+  await runGitCommand(["config", "user.email", `"${email}"`], repo_folder);
+  await runGitCommand(["add", path.relative(repo_folder, final_file)], repo_folder);
+  await runGitCommand(["commit", "-m", `"Bindings-Builder added ${found.binding_folder_name}"`], repo_folder);
+  await runGitCommand(["push"], repo_folder);
+/*
   // Add
   await git.add({ fs, dir: repo_folder, filepath: path.relative(repo_folder, final_file) });
 
@@ -97,6 +105,7 @@ async function processBuild(version, token, email) {
   });
 
   await pushChanges(repo_folder, email, token);
+  */
 }
 
 async function pushChanges(repo_folder, email, token){
@@ -144,6 +153,12 @@ async function pushChanges(repo_folder, email, token){
   
   console.log("Push failed!");
   console.error(err);
+}
+
+async function runGitCommand(command, repo_folder) {
+  await spawn("git", command, {
+    cwd: repo_folder
+  });
 }
 
 let args = process.argv.slice(2);
