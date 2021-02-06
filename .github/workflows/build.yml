@@ -33,4 +33,4 @@ jobs:
     - name: Install and Rebuild Bindings
       run: npm install
     - name: Move Bindings To Repo
-      run: node main.js ${{ steps.version.outputs.prop }} ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
+      run: node process.js ${{ steps.version.outputs.prop }} ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
