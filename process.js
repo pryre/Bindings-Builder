@@ -57,6 +57,7 @@ async function processBuild(version, token, email) {
   fs.mkdirSync(repo_folder);
 
   // Clone the repo
+  /*
   await git.clone({
     fs,
     http,
@@ -71,6 +72,10 @@ async function processBuild(version, token, email) {
     dir: repo_folder,
     ref: 'develop'
   });
+  */
+
+  await runGitCommand(["clone", `https://cpwood:${token}@github.com/cpwood/Pico-Go.git`], path.resolve(path.join(repo_folder, "..")));
+  await runGitCommand(["checkout", "develop"], repo_folder);
 
   // Delete an existing target folder
 
@@ -158,11 +163,12 @@ async function pushChanges(repo_folder, email, token){
 }
 
 async function runGitCommand(command, repo_folder) {
-  console.log(command);
-
   let output = spawnSync("git", command, {
     cwd: repo_folder
   }).output;
+
+  if (output[0] != null)
+    console.log(output[0].toString('utf8'));
 
   if (output[1] != null)
     console.log(output[1].toString('utf8'));
