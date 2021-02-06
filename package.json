@@ -5,7 +5,6 @@
   "main": "index.js",
   "electronVersion": "11.2.1",
   "scripts": {
-    "postinstall": "node build.js"
   },
   "author": "",
   "license": "ISC",

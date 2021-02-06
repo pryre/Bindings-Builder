@@ -1,3 +1,4 @@
+const package = require("./package.json");
 const fs = require("fs")
 const git = require("isomorphic-git");
 const http = require('isomorphic-git/http/node');
@@ -158,15 +159,22 @@ async function pushChanges(repo_folder, email, token){
 
 async function runGitCommand(command, repo_folder) {
   console.log(command);
-  console.log(spawnSync("git", command, {
+
+  let output = spawnSync("git", command, {
     cwd: repo_folder
-  }).output);
+  }).output;
+
+  if (output[1] != null)
+    console.log(output[1].toString('utf8'));
+
+  if (output[2] != null)
+    console.log(output[2].toString('utf8'));
 }
 
 let args = process.argv.slice(2);
 
 try{
-  processBuild(args[0], args[1], args[2]).then(function () {
+  processBuild(package["electronVersion"], args[0], args[1]).then(function () {
     console.log("All done!");
   });
 }

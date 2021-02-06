@@ -11,12 +11,6 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
     - uses: actions/checkout@v1
-    - name: Get Electron Version
-      id: version
-      uses: notiz-dev/github-action-json-property@release
-      with: 
-          path: 'package.json'
-          prop_path: 'electronVersion'
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -30,7 +24,9 @@ jobs:
         npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
     - name: Update NPM Client
       run: npm install -g npm
-    - name: Install and Rebuild Bindings
+    - name: Install Modules
       run: npm install
+    - name: Rebuild serialport
+      run: node build.js
     - name: Move Bindings To Repo
-      run: node process.js ${{ steps.version.outputs.prop }} ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
+      run: node process.js ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
