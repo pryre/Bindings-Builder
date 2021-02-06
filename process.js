@@ -124,6 +124,7 @@ async function pushChanges(repo_folder, email, token){
         dir: repo_folder,
         remote: 'origin',
         ref: 'develop',
+        force: true,
         onAuth: () => ({
           username: token
         }),
