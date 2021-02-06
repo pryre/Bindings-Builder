@@ -6,6 +6,7 @@ const fetch = require('node-fetch');
 const glob = require("glob");
 const _ = require("lodash");
 const util = require('util');
+const { spawnSync } = require("child_process");
 const spawn = util.promisify(require('child_process').spawn);
 
 async function findBindings(version) {
@@ -156,9 +157,10 @@ async function pushChanges(repo_folder, email, token){
 }
 
 async function runGitCommand(command, repo_folder) {
-  await spawn("git", command, {
+  console.log(command);
+  console.log(spawnSync("git", command, {
     cwd: repo_folder
-  });
+  }).output);
 }
 
 let args = process.argv.slice(2);
