@@ -3,17 +3,35 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "electronVersion": "11.2.1",
-  "scripts": {
-  },
+  "codeVersions": [
+    {
+      "code": "1.54.0",
+      "electron": "11.2.2",
+      "modules": 85
+    },
+    {
+      "code": "1.53.0",
+      "electron": "11.2.1",
+      "modules": 85
+    },
+    {
+      "code": "1.52.0",
+      "electron": "9.3.5",
+      "modules": 80
+    },
+    {
+      "code": "1.51.0",
+      "electron": "9.3.3",
+      "modules": 80
+    }
+  ],
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "dependencies": {
     "electron-rebuild": "^2.3.4",
-    "glob": "^7.1.6",
-    "isomorphic-git": "^1.8.0",
     "lodash": "^4.17.20",
-    "node-fetch": "^2.6.1",
+    "semver": "^7.3.4",
     "serialport": "^9.0.6"
   }
 }
