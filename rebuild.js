@@ -4,7 +4,7 @@ const { spawn } = require("child_process");
 const path = require("path");
 
 class Rebuild {
-    RebuildPlatform(code_version) {
+    async RebuildPlatform(code_version) {
         console.log(`Running electron-rebuild for Electron version ${code_version.electron} (${code_version.platform} ${code_version.arch}) ..`)
 
         let p = path.resolve(path.join("node_modules", ".bin", "electron-rebuild"));

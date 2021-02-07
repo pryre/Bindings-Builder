@@ -63,7 +63,7 @@ async function build(token, email) {
 
             if (!nm.Exists(x)) {
                 // NB: following line will fail when run in debug.
-                let built_folder = rebuild.RebuildPlatform(x);     
+                let built_folder = await rebuild.RebuildPlatform(x);     
                 // For debugging only
                 //let built_folder = path.resolve(path.join("node_modules", "@serialport", "bindings", "bin", `${x.platform}-${x.arch}-${x.modules}`));
 
