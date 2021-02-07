@@ -65,8 +65,7 @@ async function build(token, email) {
                 let built_folder = rebuild.RebuildPlatform(x);     
                 // For debugging only
                 //let built_folder = path.resolve(path.join("node_modules", "@serialport", "bindings", "bin", `${x.platform}-${x.arch}-${x.modules}`));
-                
-                /*
+
                 let final_folder = NativeModules.Add(built_folder, bindings_root, x);
 
                 await git.AddFile(path.join(final_folder, "bindings.node"));
@@ -74,7 +73,6 @@ async function build(token, email) {
 
                 await git.Commit(`Bindings-Builder added node-v${x.modules}-${platform}-${arch}`);
                 await git.Push();
-                */
             }
             else {
                 console.log(`Not rebuilding for v${x.modules} ${x.platform} (${x.arch}).`)

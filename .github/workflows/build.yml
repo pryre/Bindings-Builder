@@ -26,7 +26,5 @@ jobs:
       run: npm install -g npm
     - name: Install Modules
       run: npm install
-    - name: Rebuild serialport
-      run: node build.js
-    - name: Move Bindings To Repo
-      run: node process.js ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
+    - name: Rebuild serialport and Commit
+      run: node build.js ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}

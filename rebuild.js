@@ -13,14 +13,16 @@ class Rebuild {
             //cwd: repo_folder
         }).output;
 
-        if (output[0] != null)
-            console.log(output[0].toString('utf8'));
+        if (output != null) {
+            if (output[0] != null)
+                console.log(output[0].toString('utf8'));
 
-        if (output[1] != null)
-            console.log(output[1].toString('utf8'));
+            if (output[1] != null)
+                console.log(output[1].toString('utf8'));
 
-        if (output[2] != null)
-            console.log(output[2].toString('utf8'));
+            if (output[2] != null)
+                console.log(output[2].toString('utf8'));
+        }
 
         return path.resolve(path.join("node_modules", "@serialport", "bindings", "bin", `${code_version.platform}-${code_version.arch}-${code_version.modules}`));
     }
