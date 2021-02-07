@@ -16,7 +16,7 @@ let responsibilities = [
     },
     {
         platform: "darwin",
-        arch: ["x64"]
+        arch: ["x64", "arm64"]
     },
     {
         platform: "linux",
