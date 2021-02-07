@@ -9,6 +9,9 @@ class Rebuild {
 
         let p = path.resolve(path.join("node_modules", ".bin", "electron-rebuild"));
 
+        if (code_version.platform == "win32")
+            p += ".cmd";
+
         let child = spawn(p, ["-f", "-w", "serialport", "--version", code_version.electron, "--arch", code_version.arch]);
 
         for await (let data of child.stdout) {
