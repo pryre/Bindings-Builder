@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { spawn } = require("child_process");
 
 class Git {
     constructor(url, username, token, repo_folder, real_name, email) {
@@ -48,18 +48,17 @@ class Git {
     }
 
     async __runGitCommand(command, repo_folder = this._repo_folder) {
-        let output = spawnSync("git", command, {
-          cwd: repo_folder
-        }).output;
-      
-        if (output[0] != null)
-          console.log(output[0].toString('utf8'));
-      
-        if (output[1] != null)
-          console.log(output[1].toString('utf8'));
-      
-        if (output[2] != null)
-          console.log(output[2].toString('utf8'));
+        let child = spawn("git", command, {
+            cwd: repo_folder
+        });
+
+        for await (let data of child.stdout) {
+            console.log(`${data}`);
+        };
+
+        for await (let data of child.stderr) {
+            console.error(`${data}`);
+        };
       }
 }
 
