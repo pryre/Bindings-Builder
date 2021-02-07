@@ -39,6 +39,10 @@ class Git {
         await this.__runGitCommand(["commit", "-m", message]);
     }
 
+    async Pull() {
+        await this.__runGitCommand(["pull"]);
+    }
+
     async Push() {
         await this.__runGitCommand(["push"]);
     }

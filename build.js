@@ -53,6 +53,7 @@ async function build(token, email) {
 
             if (spRemoved || modRemoved) {
                 await git.Commit(`Bindings-Builder cleaned up native modules for ${platform} (${arch})`);
+                await git.Pull();
                 await git.Push();
             }
 
@@ -72,6 +73,7 @@ async function build(token, email) {
                 await git.AddFile(path.join(final_folder, "info.json"));
 
                 await git.Commit(`Bindings-Builder added node-v${x.modules}-${platform}-${arch}`);
+                await git.Pull();
                 await git.Push();
             }
             else {
