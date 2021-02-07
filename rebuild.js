@@ -16,19 +16,11 @@ class Rebuild {
 
         for await (let data of child.stdout) {
             console.log(`${data}`);
-          };
-/*
-        if (output != null) {
-            if (output[0] != null)
-                console.log(output[0].toString('utf8'));
+        };
 
-            if (output[1] != null)
-                console.log(output[1].toString('utf8'));
-
-            if (output[2] != null)
-                console.log(output[2].toString('utf8'));
-        }
-*/
+        for await (let data of child.stderr) {
+            console.error(`${data}`);
+        };
 
         console.log("Finished building bindings!");
 
