@@ -5,51 +5,51 @@ const path = require("path");
 const { spawn } = require("child_process");
 
 class Git {
-    constructor(url, username, token, repo_folder, real_name, email) {
+    constructor(url, username, token, repoFolder, realName, email) {
         this._url = `https://${username}:${token}@${url.replace("https://", "")}`;
-        this._repo_folder = repo_folder;
-        this._real_name = real_name;
+        this._repoFolder = repoFolder;
+        this._realName = realName;
         this._email = email;
     }
 
-    async Clone() {
+    async clone() {
         // Delete an existing source folder and make a new one
-        if (fs.existsSync(this._repo_folder))
-        fs.rmdirSync(this._repo_folder, {
+        if (fs.existsSync(this._repoFolder))
+        fs.rmdirSync(this._repoFolder, {
             recursive: true,
             force: true
         });
 
-        fs.mkdirSync(this._repo_folder);
+        fs.mkdirSync(this._repoFolder);
 
-        await this.__runGitCommand(["clone", this._url], path.resolve(path.join(this._repo_folder, "..")));
-        await this.__runGitCommand(["config", "user.name", `"${this._real_name}"`]);
-        await this.__runGitCommand(["config", "user.email", `"${this._email}"`]);
+        await this._runGitCommand(["clone", this._url], path.resolve(path.join(this._repoFolder, "..")));
+        await this._runGitCommand(["config", "user.name", `"${this._realName}"`]);
+        await this._runGitCommand(["config", "user.email", `"${this._email}"`]);
     }
 
-    async Checkout(branch) {
-        await this.__runGitCommand(["checkout", branch]);
+    async checkout(branch) {
+        await this._runGitCommand(["checkout", branch]);
     }
 
-    async AddFile(absolute_file_path) {
-        await this.__runGitCommand(["add", path.relative(this._repo_folder, absolute_file_path)]);
+    async addFile(absolute_file_path) {
+        await this._runGitCommand(["add", path.relative(this._repoFolder, absolute_file_path)]);
     }
 
-    async Commit(message) {
-        await this.__runGitCommand(["commit", "-m", message]);
+    async commit(message) {
+        await this._runGitCommand(["commit", "-m", message]);
     }
 
-    async Pull() {
-        await this.__runGitCommand(["pull"]);
+    async pull() {
+        await this._runGitCommand(["pull"]);
     }
 
-    async Push() {
-        await this.__runGitCommand(["push"]);
+    async push() {
+        await this._runGitCommand(["push"]);
     }
 
-    async __runGitCommand(command, repo_folder = this._repo_folder) {
+    async _runGitCommand(command, repoFolder = this._repoFolder) {
         let child = spawn("git", command, {
-            cwd: repo_folder
+            cwd: repoFolder
         });
 
         for await (let data of child.stdout) {

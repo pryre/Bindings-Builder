@@ -52,7 +52,7 @@ class CodeVersion {
         this._arch = value;
     }
 
-    static GetProcessingVersions(codeVersions) {
+    static getProcessingVersions(codeVersions) {
         let mods = _.uniq(_.map(codeVersions, x => x.modules));
         let v = [];
 

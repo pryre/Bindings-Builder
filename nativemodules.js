@@ -10,73 +10,73 @@ class NativeModules {
         this._folder = folder;
     }
     
-    RemoveOtherSerialportVersions(platform, arch, keepVersion) {
-        let folders = this.__getAllFolders();
-        let found = false;
+    removeOtherSerialportVersions(platform, arch, keepVersion) {
+        let folders = this._getAllFolders();
+        let isFound = false;
 
         folders.forEach(f => {
             let cv = Object.assign(new CodeVersion(), JSON.parse(fs.readFileSync(path.join(f, "info.json"), null, "utf8")));
 
             if (cv.platform == platform && cv.arch == arch && semver.neq(keepVersion, cv.serialport)) {
                 fs.rmdirSync(f);
-                found = true;
+                isFound = true;
             }
         });
 
-        return found;
+        return isFound;
     }
 
-    RemoveOtherModulesVersions(platform, arch, min, max) {
-        let folders = this.__getAllFolders();
-        let found = false;
+    removeOtherModulesVersions(platform, arch, min, max) {
+        let folders = this._getAllFolders();
+        let isFound = false;
 
         folders.forEach(f => {
             let cv = Object.assign(new CodeVersion(), JSON.parse(fs.readFileSync(path.join(f, "info.json"), null, "utf8")));
 
             if (cv.platform == platform && cv.arch == arch && (cv.modules < min || cv.modules > max)) {
                 fs.rmdirSync(f);
-                found = true;
+                isFound = true;
             }
         });
 
-        return found;
+        return isFound;
     }
 
-    Exists(code_version) {
-        let folders = this.__getAllFolders();
+    exists(codeVersion) {
+        let folders = this._getAllFolders();
 
         for(let f of folders) {
             let cv = Object.assign(new CodeVersion(), JSON.parse(fs.readFileSync(path.join(f, "info.json"), null, "utf8")));
 
-            if (cv.modules == code_version.modules && cv.platform == code_version.platform && cv.arch == code_version.arch && cv.serialport == code_version.serialport)
+            if (cv.modules == codeVersion.modules && cv.platform == codeVersion.platform && cv.arch == codeVersion.arch && cv.serialport == codeVersion.serialport)
                 return true;
         }
 
         return false;
     }
 
-    static Add(built_folder, modules_folder, code_version) {
+    static add(built_folder, modules_folder, codeVersion) {
         let file = path.join(built_folder, "bindings.node");
-        let final_folder = path.join(modules_folder, `node-v${code_version.modules}-${code_version.platform}-${code_version.arch}`);
-        let final_file = path.join(final_folder, "bindings.node");
-        let final_info = path.join(final_folder, "info.json");
+        let finalFolder = path.join(modules_folder, `node-v${codeVersion.modules}-${codeVersion.platform}-${codeVersion.arch}`);
+        let finalFile = path.join(finalFolder, "bindings.node");
+        let finalInfo = path.join(finalFolder, "info.json");
 
         // Delete an existing target folder
-        if (fs.existsSync(final_folder))
-        fs.rmdirSync(final_folder, {
+        if (fs.existsSync(finalFolder))
+        fs.rmdirSync(finalFolder, {
             recursive: true,
             force: true
         });
 
-        fs.mkdirSync(final_folder);
-        fs.copyFileSync(file, final_file);
+        fs.mkdirSync(finalFolder);
+        fs.copyFileSync(file, finalFile);
 
-        fs.writeFileSync(final_info, JSON.stringify(code_version));
+        fs.writeFileSync(finalInfo, JSON.stringify(codeVersion));
 
-        return final_folder;
+        return finalFolder;
     }
 
-    __getAllFolders() {
+    _getAllFolders() {
         let folders = fs.readdirSync(this._folder);
         let output = [];
 

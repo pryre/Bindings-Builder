@@ -29,52 +29,52 @@ async function build(token, email) {
     let serialport = pkg.dependencies.serialport.replace("^", "");
     let codeVersions = pkg.codeVersions;
 
-    let repo_folder = path.resolve(path.join("..", "..", "Pico-Go"));
-    let git = new Git("https://github.com/cpwood/Pico-Go.git", "cpwood", token, repo_folder, "Chris Wood", email);
+    let repoFolder = path.resolve(path.join("..", "..", "Pico-Go"));
+    let git = new Git("https://github.com/cpwood/Pico-Go.git", "cpwood", token, repoFolder, "Chris Wood", email);
 
-    await git.Clone();
-    await git.Checkout("develop");
+    await git.clone();
+    await git.checkout("develop");
 
-    let bindings_root = path.resolve(path.join(repo_folder, "native_modules"));
+    let bindingsRoot = path.resolve(path.join(repoFolder, "native_modules"));
 
-    let nm = new NativeModules(bindings_root);
+    let nm = new NativeModules(bindingsRoot);
 
     let minModules = _.minBy(codeVersions, x => x.modules).modules;
     let maxModules = _.maxBy(codeVersions, x => x.modules).modules;
     
     let platformResponsibilities = _.find(responsibilities, x => x.platform == platform);
-    let modulesVersion = CodeVersion.GetProcessingVersions(codeVersions);
+    let modulesVersion = CodeVersion.getProcessingVersions(codeVersions);
     let rebuild = new Rebuild();
 
     for(let arch of platformResponsibilities.arch) {
         for(let x of modulesVersion) {
-            let spRemoved = nm.RemoveOtherSerialportVersions(platform, arch, serialport);
-            let modRemoved = nm.RemoveOtherModulesVersions(platform, arch, minModules, maxModules);
+            let spRemoved = nm.removeOtherSerialportVersions(platform, arch, serialport);
+            let modRemoved = nm.removeOtherModulesVersions(platform, arch, minModules, maxModules);
 
             if (spRemoved || modRemoved) {
-                await git.Commit(`Bindings-Builder cleaned up native modules for ${platform} (${arch})`);
-                await git.Pull();
-                await git.Push();
+                await git.commit(`Bindings-Builder cleaned up native modules for ${platform} (${arch})`);
+                await git.pull();
+                await git.push();
             }
 
             x.serialport = serialport;
             x.platform = platform;
             x.arch = arch;
 
-            if (!nm.Exists(x)) {
+            if (!nm.exists(x)) {
                 // NB: following line will fail when run in debug.
-                let built_folder = await rebuild.RebuildPlatform(x);     
+                let builtFolder = await rebuild.rebuildPlatform(x);     
                 // For debugging only
-                //let built_folder = path.resolve(path.join("node_modules", "@serialport", "bindings", "bin", `${x.platform}-${x.arch}-${x.modules}`));
+                //let builtFolder = path.resolve(path.join("node_modules", "@serialport", "bindings", "bin", `${x.platform}-${x.arch}-${x.modules}`));
 
-                let final_folder = NativeModules.Add(built_folder, bindings_root, x);
+                let finalFolder = NativeModules.add(builtFolder, bindingsRoot, x);
 
-                await git.AddFile(path.join(final_folder, "bindings.node"));
-                await git.AddFile(path.join(final_folder, "info.json"));
+                await git.addFile(path.join(finalFolder, "bindings.node"));
+                await git.addFile(path.join(finalFolder, "info.json"));
 
-                await git.Commit(`Bindings-Builder added node-v${x.modules}-${platform}-${arch}`);
-                await git.Pull();
-                await git.Push();
+                await git.commit(`Bindings-Builder added node-v${x.modules}-${platform}-${arch}`);
+                await git.pull();
+                await git.push();
             }
             else {
                 console.log(`Not rebuilding for v${x.modules} ${x.platform} (${x.arch}).`)
