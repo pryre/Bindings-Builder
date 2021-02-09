@@ -22,9 +22,9 @@ jobs:
       run: |
         npm install --global node-gyp@latest
         npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
-    - name: Ensure macOS SDK 11.1 is used
+    - name: Ensure latest macOS SDK is used
       if: matrix.os == 'macos-latest'
-      shell: powershell
+      shell: zsh {0}
       run: |
         sudo xcode-select --switch "$(find /Applications -mindepth 1 -maxdepth 1 ! -type l | grep "Xcode_[\.0-9]*app" | sort -V | tail -1)/Contents/Developer"
         sudo rm -Rf /Library/Developer/CommandLineTools/SDKs/*
