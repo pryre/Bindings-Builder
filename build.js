@@ -26,7 +26,7 @@ let responsibilities = [
         arch: ["x64"]
     },
     {
-        matrix: "self-hosted",
+        matrix: "pi-hosted",
         platform: "linux",
         arch: ["arm64"]
     } 
