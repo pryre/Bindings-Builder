@@ -29,7 +29,7 @@ let responsibilities = [
         matrix: "self-hosted",
         platform: "linux",
         arch: ["arm64"]
-    }
+    } 
 ];
 
 async function build(matrix, token, email) {
