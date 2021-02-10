@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, self-hosted]
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
@@ -33,4 +33,4 @@ jobs:
     - name: Install Modules
       run: npm install
     - name: Rebuild serialport and Commit
-      run: node build.js ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
+      run: node build.js ${{ matrix.os }} ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}

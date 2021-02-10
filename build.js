@@ -11,20 +11,28 @@ const _ = require("lodash")
 
 let responsibilities = [
     {
+        matrix: "windows-latest",
         platform: "win32",
         arch: ["x64"]
     },
     {
+        matrix: "macos-latest",
         platform: "darwin",
         arch: ["x64", "arm64"]
     },
     {
+        matrix: "linux-latest",
         platform: "linux",
-        arch: ["x64", "arm64"]
+        arch: ["x64"]
+    },
+    {
+        matrix: "self-hosted",
+        platform: "linux",
+        arch: ["arm64"]
     }
 ];
 
-async function build(token, email) {
+async function build(matrix, token, email) {
     let platform = os.platform();
     let serialport = pkg.dependencies.serialport.replace("^", "");
     let codeVersions = pkg.codeVersions;
@@ -42,7 +50,7 @@ async function build(token, email) {
     let minModules = _.minBy(codeVersions, x => x.modules).modules;
     let maxModules = _.maxBy(codeVersions, x => x.modules).modules;
     
-    let platformResponsibilities = _.find(responsibilities, x => x.platform == platform);
+    let platformResponsibilities = _.find(responsibilities, x => x.matrix == matrix);
     let modulesVersion = CodeVersion.getProcessingVersions(codeVersions);
     let rebuild = new Rebuild();
 
@@ -85,6 +93,6 @@ async function build(token, email) {
 
 let args = process.argv.slice(2);
 
-build(args[0], args[1]).then(function() {
+build(args[0], args[1], args[2]).then(function() {
     console.log("All done!");
 });
