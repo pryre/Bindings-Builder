@@ -21,7 +21,7 @@ let responsibilities = [
         arch: ["x64", "arm64"]
     },
     {
-        matrix: "linux-latest",
+        matrix: "ubuntu-latest",
         platform: "linux",
         arch: ["x64"]
     },
