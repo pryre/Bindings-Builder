@@ -33,4 +33,4 @@ jobs:
     - name: Install Modules
       run: npm install
     - name: Rebuild serialport and Commit
-      run: node build.js ${{ matrix.os }} ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}
+      run: node --unhandled-rejections=strict build.js ${{ matrix.os }} ${{ secrets.TOKEN }} ${{ secrets.EMAIL }}

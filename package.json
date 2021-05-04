@@ -34,7 +34,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "electron-rebuild": "^2.3.4",
+    "electron-rebuild": "^2.3.5",
     "lodash": "^4.17.20",
     "semver": "^7.3.4",
     "serialport": "^9.0.6"
