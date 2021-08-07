@@ -18,7 +18,7 @@ class NativeModules {
             let cv = Object.assign(new CodeVersion(), JSON.parse(fs.readFileSync(path.join(f, "info.json"), null, "utf8")));
 
             if (cv.platform == platform && cv.arch == arch && semver.neq(keepVersion, cv.serialport)) {
-                fs.rmdirSync(f);
+                fs.rmdirSync(f, { recursive: true });
                 isFound = true;
             }
         });
